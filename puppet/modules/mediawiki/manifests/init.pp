@@ -80,6 +80,7 @@ class mediawiki(
     git::clone { 'mediawiki/core':
         directory => $dir,
         branch    => $branch,
+        remote => 'git://github.com/wikimedia/mediawiki.git'
     }
 
     mediawiki::skin { 'Vector': }

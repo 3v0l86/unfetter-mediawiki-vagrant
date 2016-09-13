@@ -1,142 +1,68 @@
-## MediaWiki-Vagrant
+# Unfetter fork of mediawiki-vagrant
 
-https://www.mediawiki.org/wiki/Mediawiki-vagrant
-
-MediaWiki-Vagrant is a portable MediaWiki development environment. It consists
-of a set of configuration scripts that automate the creation of a virtual
-machine that runs MediaWiki.
-
-The virtual machine that MediaWiki-Vagrant creates makes it easy to learn
-about, modify, and improve MediaWiki's code: useful debugging information is
-displayed by default, and various developer tools are set up specifically for
-inspecting and interacting with MediaWiki code, including a powerful debugger
-and an interactive interpreter. Best of all, because the configuration is
-automated and contained in a virtual environment, mistakes are easy to undo.
+This is a fork of https://github.com/wikimedia/mediawiki-vagrant/ which provides a downloadable version of The MITRE Corporation's <a href="https://car.mitre.org">Cyber Analytics Repository</a> (CAR) and <a href="https://attack.mitre.org">Adversarial Tactics, Techniques, and Common Knowledge</a> (ATT&CK&trade;) wikis. Along with CARET, the CAR Exploration Tool.
+For more information, please see https://mitre.github.io/unfetter
 
 ## Install
 
-You'll need to install recent versions of Vagrant and VirtualBox.
+1. Install Virtualbox 5.0.26 and vagrant 1.8.1
+1. Perform all of the instructions for the normal [mediawiki-vagrant](https://github.com/wikimedia/mediawiki-vagrant) installation but perform the <code>git clone</code> with the address of this repository. Do not download the zip file from this repository. It will not provide the needed submodules.
+ * Per the mediawiki-vagrant instructions, run ```git submodule update --init --recursive``` followed by the appropriate setup script for your operating system.
+ * Run the appropriate setup script for your platform (e.g., ```setup.bat``` or ```setup.sh```).
+ * If you receive an error when building the mediawiki-vagrant gem, make sure you're using the version of Vagrant specified in the Gemfile.lock file.
+2. After performing an initial ```vagrant up``` enter a ```vagrant roles enable unfetter``` to enable the Unfetter roles, which installs the CAR and ATT&CK wiki content.
+3. Enter ```vagrant provision``` to provision the VM according to the Unfetter role
+ * We recommend disabling any proxies during setup. We have found that provisioning does not work well when using a proxy.
+4. Navigate to http://localhost:8080/ to view a version of CAR. A link to ATT&CK is list on the CAR landing page. CARET is located at http://localhost:8080/caret.
 
-(Note that *experimental* support for Parallels, LXC, libvirt
-(KVM/QEMU), VMWare Fusion, and Microsoft Hyper-V providers exists.
-See `support/README-libvirt.md` `support/README-lxc.md` or
-`support/README-parallels.md` for details on the former three.)
+## Adding New Groups, Analytics, and Sensors
+The downloadable versions of CAR and ATT&CK are designed to be customizable for users to add new adversary groups (to ATT&CK) or analytics and sensors (to CAR).  
 
- * VirtualBox: https://www.virtualbox.org/wiki/Downloads
- * Vagrant: https://www.vagrantup.com/downloads-archive.html (the version must be
-   1.4.0 or higher). For NFS, use 1.5.4 or higher.
+### Adding a New Group to ATT&CK
+1. On the navigation bar on the left hand side of the ATT&CK wiki there is a heading for “Groups.”
+1. Underneath the “Groups” heading is the option to “Add a Group.”  Navigate to this page.  
+1. On the “Create Group” page, you will see text boxes for “Alias” and “Description” as well as drop-down menus and fields for “Techniques” and “Software.”  Complete these fields and hit save to register the entry.
+ * <i>Alias</i> refers to the name(s) of the group.
+ * <i>Description</i> is a brief summary of the group – such as what campaigns the group is responsible for and information about the attribution of the group.
+ * <i>Techniques</i> Used are the ATT&CM techniques used.  The open field may be used to explain how that particular group uses the ATT&CK technique.
+ * <i>Software</i> is a field to list the named software used by the group.
+ 
+### Adding a New Analytic to CAR
+1. On the navigation bar on the left-hand side of the CAR wiki there is a heading for “Contribute.”
+1. Underneath the “Contribute” heading is the option “Analytics.”  Navigate to this page.
+1. On the “Create Analytic” page, you will see text boxes for:  Title, Hypothesis, Submission Date, Information Domain, Host/Network Subtypes, Network Protocols (where applicable), Type, Status, Output Description, ATT&CK Detection, Pseudocode, and Unit Tests (where applicable).  Complete these fields and hit save to register the entry. For more information about the CAR Data Model, see “Data Model” under the “Coverage” heading of the navigation bar on the left hand side of the wiki.  
+ * <i>Title</i> refers to the name of the analytic.
+ * <i>Hypothesis</i> refers to the question, challenge, or adversary behavior the analytic is trying to detect and how the user believes it can be detected.
+ * <i>Submission</i> Date refers to when the analytic was created by the user.
+ * <i>Information Domain</i> refers to where the analytic<a href="#footnote1" id="footnote1_src"><sup>[1]</sup></a> applies and works to detect the adversary – either at the analytic, host, or network level.
+ * <i>Host/Network Subtypes</i> refers to the object in the data model that must be monitored and gathered in order to obtain the data necessary to run the analytic.
+ * <i>Network Protocols applies</i> to network analytics and refers to the specific protocol that contains the data (i.e., SMB).
+ * <i>Type</i> refers to the types of analytics categorized by the CAR data model (TTP, Attribution, Posture/Hygiene, Situational Awareness, Forensic, Anomaly, Statistical, Investigative, Malware, Event Characterization).
+ * <i>Status</i> refers to whether the analytic is actively being used in the system, in which case the status is listed as "active."
+ * <i>Output Description</i> refers to the objects, actions, and fields in the data model the analytic detects.  For more information, please see the Data Model page found on the left-hand navigation bar of the wiki.
+ * <i>ATT&CK Detection</i> refers to the ATT&CK techniques, tactics, and level of coverage (moderate or complete) of the analytic.  
+ * <i>Pseudocode</i> refers to a description of how the analytic might be implemented.
+ * <i>Unit Tests</i> refer to a test that can be run to trigger the analytic.
 
-   To check your Vagrant version, run
+### Adding a New Sensor to CAR
+1. On the navigation bar on the left-hand side of the CAR wiki there is a heading for “Contribute.”
+1. Underneath the “Contribute” heading is the option “Sensors.”  Navigate to this page.
+1. On the “Create Sensor” page you will see options for:  Title, Manufacturer, Release Date, Version, Website, Description, Analytic Coverage, Technique Coverage, and Data Model Coverage.  Complete these fields and checkboxes and hit save to register the entry.
+ * <i>Title</i> refers to the name of the sensor.
+ * <i>Manufacturer</i> refers to the company producing the sensor.
+ * <i>Release Date</i> refers to the Manufacturer’s release date for the sensor.
+ * <i>Version</i> refers to the version of the sensor being used.
+ * <i>Website</i> refers to the Manufacturer’s website for the sensor.
+ * <i>Description</i> refers to what the sensor is, who it is owned by, what it does, what information it collects, and how.
+ * <i>Analytic Coverage</i> is the analytics that use information from this sensor to produce results.  Mapping a sensor to an analytic indicates that a sensor can be used in conjunction with an analytic to answer a question about a group’s ATT&CK technique coverage.
+ * <i>Technique Coverage</i> is the ATT&CK techniques that a sensor can help identify when used in conjunction with particular analytics.  Coverage is either not present (red), partial (yellow), or complete (green) in the colored boxes of the ATT&CK Matrix.
+ * <i>Data Model Coverage</i> refers to the objects, actions, and fields within the Data Model that a sensor collects.  The Data Model, inspired strongly by [CybOX](http://cyboxproject.github.io)&trade;, is an organization of the objects or observables that may be monitored on the host and from the network.  Each object on the host can be identified by two dimensions:  its actions and fields.  When grouped together, the three-tuple of (object, action, field) acts like a coordinate, and describes what properties and state changes of the object can be captured by a sensor.  Compare the Data Model's use in analytics that map to ATT&CK and its use for different sensors.  For example, the “process” object of the Data Model requires fields such as “FQDN” and “Hostname” and must capture actions such as “create” and “terminate.”  Some sensors are static/forensic rather than real-time in nature and do not capture the individual actions of the Data Model; thus, they have incomplete ATT&CK coverage, indicating an inability to use the analytics of CAR to detect an adversary completing a particular ATT&CK technique.
 
-     vagrant --version
+<hr />
+<a name="footnote1" href="#footnote1_src">1</a>: Select analytic when an analytic is designed to group other analytics together.
 
-   in a directory without a Vagrantfile (e.g. in your home directory).
- * You must have a 64-bit processor (although your host OS can be 32-bit).
+<hr />
+ATT&CK is a trademark of The MITRE Corporation.
 
-   Hardware virtualization extensions must be enabled in your host computer
-   BIOS. The BIOS setting is usually in the "Chipset", "Processor", "CPU", or
-   "Security Settings" menu and may be labeled as "VT-x", "Intel
-   Virtualization Technology", "Virtualization Extensions", "Vanderpool"
-   "AMD-V" or various other names depending on the OEM and system BIOS.
- * (Optional) For better performance on non-Windows hosts, install NFS.  For
-   Debian-based systems (including Ubuntu), run:
+Copyright 2016 The MITRE Corporation. ALL RIGHTS RESERVED.
 
-    sudo apt-get install nfs-kernel-server portmap
-
-   You can optionally configure sudo not to prompt you for the password when
-   doing operations related to this NFS service.  See
-   https://www.vagrantup.com/docs/synced-folders/nfs.html#root-privilege-requirement
-
-Next, you'll need a copy of the mediawiki-vagrant project files.
-
- * zip: https://git.wikimedia.org/zip/?r=mediawiki/vagrant.git&h=HEAD&format=zip
- * tar.gz: https://git.wikimedia.org/zip/?r=mediawiki/vagrant.git&h=HEAD&format=gz
- * Git: `git clone https://gerrit.wikimedia.org/r/mediawiki/vagrant`
-
-If you've downloaded the zip file or tarball, you will need to extract it to a
-directory of your choice. Once you do that, open up a terminal or a
-command-prompt, and change your working directory to the location of the
-extracted (or git-cloned) files.
-
-If you have cloned the git repository you will also need to clone the
-submodules with:
-
-    git submodule update --init --recursive
-
-Run the appropriate setup script for your platform. For Windows, run
-`setup.bat`. For Linux and OS X, run `setup.sh`. Some extra Vagrant plugins,
-including the bundled mediawiki-vagrant plugin, will be installed.
-
-From there, run `vagrant up` to provision and boot the virtual machine.
-
-You'll now have to wait a bit, as Vagrant needs to retrieve the base image from
-Canonical, retrieve some additional packages, and install and configure each of
-them in turn.
-
-If it all worked, you should be able to browse to http://127.0.0.1:8080/ and
-see the main page of your MediaWiki instance.
-
-
-## Use
-
-To access a command shell on your virtual environment, run `vagrant ssh` from
-the root mediawiki-vagrant directory or any of its subdirectories.
-
-From there, run `mwrepl` to interactively evaluate PHP code in a MediaWiki
-context, or `mysql` to get an authenticated SQL shell on your wiki's database.
-If you have multiple wikis enabled, you can run e.g. `mwrepl frwiki`.
-
-The admin account on MediaWiki is `admin` / `vagrant`.
-
-
-## Update
-
-When the vagrant Virtual Machine is running, it will periodically run Puppet
-(an open source configuration management tool) to update its configuration,
-which keeps various software packages up to date. To avoid clobbering any
-changes you may have made to MediaWiki's source code, Puppet will not update
-MediaWiki.
-
-To pick up other changes to the install, on the host computer in the directory
-with the vagrant files run `git pull --rebase` and then `vagrant reload`.
-The latter will restart the VM.
-
-
-## Extend
-
-You can add roles to MediaWiki-Vagrant! A 'role' represents a set of software
-configurations required for giving this machine some special function.
-Mediawiki-Vagrant has several commands to manage enabled roles.
-See `vagrant roles -h` for help on usage.
-
-If you'd like to use the Mediawiki-Vagrant codebase to describe a development
-environment that you could then share with other developers, you should do so
-by adding a role file to puppet/modules/role/manifests/ and submitting it as a
-patch to the Mediawiki-Vagrant project.
-
-
-## Settings
-
-For information about settings, see settings.d/README.
-
-## Testing
-
-You will need bundler < 1.8 (`gem install bundler -v '<1.8'`). Then:
-
-    bundler install
-    rake
-
-Will run all the linter, test and doc generation commands.
-
-## Troubleshoot
-
-Stuck? Here's where to get help.
-
- * https://www.mediawiki.org/wiki/Mediawiki-Vagrant#Troubleshooting
- * irc://chat.freenode.net/#mediawiki
-
-Please report any bugs on Wikimedia's Phabricator:
- * https://phabricator.wikimedia.org/maniphest/task/create/?projects=MediaWiki-Vagrant
-
-Patches and contributions are welcome!
-See <https://www.mediawiki.org/wiki/How_to_become_a_MediaWiki_hacker> for details.
