@@ -24,7 +24,7 @@ class role::unfetter {
 
     mediawiki::composer::require { 'SemanticForms': 
         package => 'mediawiki/semantic-forms',
-        version => '3.5',
+        version => '3.7',
     }
 
     mediawiki::settings { 'SemanticForms':
